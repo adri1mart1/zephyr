@@ -94,9 +94,8 @@ static void set_tx_power(uint8_t handle_type, uint16_t handle, int8_t tx_pwr_lvl
 	}
 
 	cp = net_buf_add(buf, sizeof(*cp));
-	cp->handle = sys_cpu_to_le16(handle);
-	cp->handle_type = handle_type;
-	cp->tx_power_level = tx_pwr_lvl;
+	cp->tx_min = 0;
+	cp->tx_max = 0;
 
 	err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL,
 				   buf, &rsp);
@@ -106,7 +105,7 @@ static void set_tx_power(uint8_t handle_type, uint16_t handle, int8_t tx_pwr_lvl
 	}
 
 	rp = (void *)rsp->data;
-	printk("Actual Tx Power: %d\n", rp->selected_tx_power);
+	printk("Tx Power returned status: %d\n", rp->status);
 
 	net_buf_unref(rsp);
 }
@@ -127,8 +126,6 @@ static void get_tx_power(uint8_t handle_type, uint16_t handle, int8_t *tx_pwr_lv
 	}
 
 	cp = net_buf_add(buf, sizeof(*cp));
-	cp->handle = sys_cpu_to_le16(handle);
-	cp->handle_type = handle_type;
 
 	err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_READ_TX_POWER_LEVEL,
 				   buf, &rsp);
@@ -138,7 +135,12 @@ static void get_tx_power(uint8_t handle_type, uint16_t handle, int8_t *tx_pwr_lv
 	}
 
 	rp = (void *)rsp->data;
-	*tx_pwr_lvl = rp->tx_power_level;
+	printk("Get tx power status:%d supported: min:%d max:%d configured min:%d max:%d\n",
+	       rp->status, rp->min_supported_tx_power, rp->max_supported_tx_power,
+	       rp->min_configured_tx_power, rp->max_configured_tx_power);
+	printk("Tx rf path compensation: %d\n", rp->tx_rf_path_compensation);
+
+	*tx_pwr_lvl = rp->max_supported_tx_power;
 
 	net_buf_unref(rsp);
 }

@@ -390,6 +390,7 @@ int bt_hci_cmd_send_sync(uint16_t opcode, struct net_buf *buf,
 	}
 
 	LOG_DBG("buf %p opcode 0x%04x len %u", buf, opcode, buf->len);
+	LOG_HEXDUMP_DBG(buf->data, buf->len, "buf data:");
 
 	/* This local sem is just for suspending the current thread until the
 	 * command is processed by the LL. It is given (and we are awaken) by

@@ -161,31 +161,27 @@ struct bt_hci_cp_vs_set_scan_req_reports {
 #define BT_HCI_VS_LL_HANDLE_TYPE_SCAN      0x01
 #define BT_HCI_VS_LL_HANDLE_TYPE_CONN      0x02
 #define BT_HCI_VS_LL_TX_POWER_LEVEL_NO_PREF     0x7F
-#define BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL       BT_OP(BT_OGF_VS, 0x000e)
+#define BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL       BT_OP(BT_OGF_VS, 0x0014)
 struct bt_hci_cp_vs_write_tx_power_level {
-	uint8_t  handle_type;
-	uint16_t handle;
-	int8_t  tx_power_level;
+	int16_t tx_min;
+	int16_t tx_max;
 } __packed;
 
 struct bt_hci_rp_vs_write_tx_power_level {
 	uint8_t  status;
-	uint8_t  handle_type;
-	uint16_t handle;
-	int8_t  selected_tx_power;
 } __packed;
 
-#define BT_HCI_OP_VS_READ_TX_POWER_LEVEL        BT_OP(BT_OGF_VS, 0x000f)
+#define BT_HCI_OP_VS_READ_TX_POWER_LEVEL        BT_OP(BT_OGF_VS, 0x0017)
 struct bt_hci_cp_vs_read_tx_power_level {
-	uint8_t  handle_type;
-	uint16_t handle;
 } __packed;
 
 struct bt_hci_rp_vs_read_tx_power_level {
-	uint8_t  status;
-	uint8_t  handle_type;
-	uint16_t handle;
-	int8_t  tx_power_level;
+	uint8_t status;
+	int16_t min_supported_tx_power;
+	int16_t max_supported_tx_power;
+	int16_t min_configured_tx_power;
+	int16_t max_configured_tx_power;
+	int16_t tx_rf_path_compensation;
 } __packed;
 
 #define BT_HCI_OP_VS_READ_USB_TRANSPORT_MODE    BT_OP(BT_OGF_VS, 0x0010)
